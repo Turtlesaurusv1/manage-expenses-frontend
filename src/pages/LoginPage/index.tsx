@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./style.css";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 type ErrorLoggedType = {
   borderColor: "red" | "gray";
@@ -12,6 +13,7 @@ interface LoginPageProps {
 }
 
 const LoginPage = () => {
+  const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -23,22 +25,25 @@ const LoginPage = () => {
     setPassword(event.target.value);
   };
 
-
   const handleLoginSubmit = async (event: any) => {
     event.preventDefault();
     try {
-      const response = await axios.post("https://example.com/login", {
-        username,
-        password,
-      });
-      console.log(response);
-      // onLoginSubmit(username, password);
+      const response = await axios.post(
+        "http://localhost:3000/auth/api/v1/auth/web-login",
+        {
+          email: username,
+          password: password,
+        }
+      );
+
+      if (response.status === 200) {
+        navigate("/dashboard");
+      }
     } catch (error) {
       console.log(error);
     }
   };
 
-  
   return (
     <body>
       <div className="login-box">
@@ -63,7 +68,7 @@ const LoginPage = () => {
             <label htmlFor="password">Password</label>
           </div>
           <center>
-            <a href="#"  type="submit" onClick={handleLoginSubmit}>
+            <a href="#" type="submit" onClick={handleLoginSubmit}>
               LOGIN
               <span></span>
             </a>
